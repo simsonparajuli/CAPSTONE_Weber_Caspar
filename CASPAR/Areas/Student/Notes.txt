@@ -1,0 +1,2 @@
+﻿Because we have a Student class we have to change the namespace to students
+This is because if not then we cannot use the Student Class

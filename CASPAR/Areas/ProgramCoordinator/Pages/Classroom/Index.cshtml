@@ -1,0 +1,16 @@
+﻿@page
+@model CASPAR.Areas.ProgramCoordinator.Pages.Classroom.IndexModel
+@{
+    ViewData["Title"] = "Classrooms";
+}
+
+@(Html.Awe().Grid("Classrooms")
+.Mod(o => o.Main())
+.Columns(
+    new Column { Bind = "RoomNum", Header = "Room #" },
+    new Column { Bind = "Building.BuildingName", ClientFormat = ".(Name)"},
+    new Column { Bind = "Campus.CampusName", ClientFormat = ".(Name1)" }
+)
+.Url(Url.Action(nameof(CASPAR.Areas.ProgramCoordinator.Controllers.ClassroomController.GetClassrooms), "Classroom"))
+.Height(350)
+)

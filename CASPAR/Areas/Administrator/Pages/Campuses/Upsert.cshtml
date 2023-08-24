@@ -1,0 +1,291 @@
+﻿@page
+@model CASPAR.Areas.Administrator.Pages.Campuses.UpsertModel
+@{
+	ViewData["Title"] = "Campus";
+}
+<div class="row">
+	<!-- Name of current dashboard-->
+	<h4>Campus</h4>
+</div>
+
+<!-- Create a new card-->
+<div class="row">
+	<div class="col-12 mb-3">
+		<div class="card">
+			<div class="card-body py-5">
+				<form method="post" asp-page="Upsert" enctype="multipart/form-data" id="campusForm" onsubmit="return validateForm()">
+
+					<!-- Campus Name -->
+					<label asp-for="Campus.CampusName">Campus Name</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>
+						*@
+						<input asp-for="Campus.CampusName" class="form-control" />
+					</div>
+					<div class="row">
+						<span asp-validation-for="@Model.Campus.CampusName" class="text-danger"></span>
+					</div>
+
+					<!-- Address 1 -->
+					<label asp-for="Campus.Address1">Address line 1</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>
+						*@
+						<input asp-for="Campus.Address1" class="form-control" />
+					</div>
+					<div class="row">
+						<span asp-validation-for="@Model.Campus.Address1" class="text-danger"></span>
+					</div>
+
+					<!-- Address 2 -->
+					<label asp-for="Campus.Address2">Address line 2</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>
+						*@
+						<input asp-for="Campus.Address2" class="form-control" />
+					</div>
+					<div class="row">
+						<span asp-validation-for="@Model.Campus.Address2" class="text-danger"></span>
+					</div>
+
+					<!-- City -->
+					<label asp-for="Campus.City">City</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>
+						*@
+						<input asp-for="Campus.City" class="form-control" />
+					</div>
+					<div class="row">
+						<span asp-validation-for="@Model.Campus.City" class="text-danger"></span>
+					</div>
+
+					<!-- State -->
+					<label asp-for="Campus.State">State</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>
+						*@
+						<input asp-for="Campus.State" class="form-control" />
+					</div>
+					<div class="row">
+						<span asp-validation-for="@Model.Campus.State" class="text-danger"></span>
+					</div>
+
+					<!-- Country -->
+					<label asp-for="Campus.Country">Country</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>
+						*@
+						<input asp-for="Campus.Country" class="form-control" />
+					</div>
+					<div class="row">
+						<span asp-validation-for="@Model.Campus.Country" class="text-danger"></span>
+					</div>
+
+					<!-- Country -->
+					<label asp-for="Campus.Zip">ZIP / Postal Code</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>
+						*@
+						<input asp-for="Campus.Zip" class="form-control" />
+					</div>
+					<div class="row">
+						<span asp-validation-for="@Model.Campus.Zip" class="text-danger"></span>
+					</div>
+
+					<!-- End of Submit buttons -->
+					<!-- Start of Hidden Inputs-->
+					@if (Model.Campus.Id != 0)
+					{
+						<input type="hidden" asp-for="Campus.Id" class="form-control" />
+					}
+					<!-- End of Hidden Inputs-->
+					<!-- Start of Submit buttons -->
+					<div class="d-flex">
+						@if (Model.Campus.Id != 0)
+						{
+							<div class="">
+								<button type="button" class="btn btn-danger shadow-sm" data-bs-toggle="modal" data-bs-target="#campusModal">
+									<span>
+										<i class="bi bi-trash text-white"></i>
+									</span>
+									Delete
+								</button>
+							</div>
+						}
+
+						<div class="ms-auto">
+							<a asp-area="Administrator" asp-page="/Campuses/Index" class="btn btn-secondary shadow-sm">Cancel</a>
+							@if (Model.Campus.Id != 0)
+							{
+								<input asp-page-handler="EditCampus" type="submit" class="btn btn-primary shadow-sm" value="Save" />
+							}
+							else
+							{
+								<input asp-page-handler="CreateCampus" type="submit" class="btn btn-primary shadow-sm" value="Save" />
+							}
+						</div>
+					</div>
+					<!-- End of Submit buttons -->
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Start of modal-->
+<div class="modal" id="campusModal" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Delete Campus</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to <b class="text-danger">delete</b> this campus?</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<input asp-page-handler="DeleteCampus" type="submit" form="campusForm" class="btn btn-danger" value="Delete" />
+			</div>
+		</div>
+	</div>
+</div>
+<!-- End of modal-->
+@section Scripts {
+	<script>
+		class CampusController {
+			/**
+			* See if requried. True = required
+			* @@type {boolean}
+			*/
+			#Campus = true;
+			#CampusID = 'Campus_CampusName';
+			#CampusSelector = '[data-valmsg-for="Campus.CampusName"]';
+
+			#Address1 = true;
+			#Address1ID = 'Campus_Address1';
+			#Address1Selector = '[data-valmsg-for="Campus.Address1"]';
+
+			#City = true;
+			#CityID = 'Campus_City';
+			#CitySelector = '[data-valmsg-for="Campus.City"]';
+
+			#State = true;
+			#StateID = 'Campus_State';
+			#StateSelector = '[data-valmsg-for="Campus.State"]';
+
+			#Country = true;
+			#CountryID = 'Campus_Country';
+			#CountrySelector = '[data-valmsg-for="Campus.Country"]';
+
+			#Zip = true;
+			#ZipID = 'Campus_Zip';
+			#ZipSelector = '[data-valmsg-for="Campus.Zip"]';
+
+			/**
+			 * If the select field is requireds make it editable.
+			 * If not disable the input and set it to empty
+			 * @@param {string} Id The Id for the Input
+			 * @@param {string} ErrorQuery The Query for the Error DOM element\
+			 * @@param {boolean} toggle If we are making the param required
+			*/
+			#requirefield(Id, ErrorQuery, toggle) {
+				let object = document.getElementById(Id);
+				let NoneOption = object.options[object.options.length - 1];
+				if (toggle) {
+					if (object.value == '') {
+						object.options.selectedIndex = 0;
+					}
+					object.disabled = false;
+					NoneOption.style.display = 'none';
+				}
+				else {
+					object.options.selectedIndex = object.options.length - 1;
+					object.disabled = true;
+					NoneOption.style.display = 'initial';
+				}
+				let span = $(ErrorQuery)[0];
+				span.innerText = "";
+			}
+
+			/**
+			 * @@param {string} Id The Id for the Input
+			 * @@param {string} ErrorQuery The Query for the Error DOM element
+			 * @@returns {boolean} Returns true if there is an error
+			*/
+			#validateRequirement(Id, ErrorQuery) {
+				let object = document.getElementById(Id);
+				let span = $(ErrorQuery)[0];
+
+				if (object.value == "") {
+					span.innerText = "Please enter a value.";
+					return true;
+				}
+				else {
+					span.innerText = "";
+				}
+				return false;
+			}
+
+			/**
+			 * Validate all the fields. If they are return true, and if not display error messages
+			 * @@returns {boolean} returns true if valid
+			 */
+			validateFields() {
+				let isValid = true;
+
+				if (this.#validateRequirement(this.#CampusID, this.#CampusSelector)) {
+					isValid = false;
+				}
+
+				if (this.#validateRequirement(this.#Address1ID, this.#Address1Selector)) {
+					isValid = false;
+				}
+
+				if (this.#validateRequirement(this.#CityID, this.#CitySelector)) {
+					isValid = false;
+				}
+
+				if (this.#validateRequirement(this.#StateID, this.#StateSelector)) {
+					isValid = false;
+				}
+
+				if (this.#validateRequirement(this.#CountryID, this.#CountrySelector)) {
+					isValid = false;
+				}
+
+				if (this.#validateRequirement(this.#ZipID, this.#ZipSelector)) {
+					isValid = false;
+				}
+
+				return isValid;
+			}
+		};
+		// initulize the preferences right away
+		let campusController = new CampusController();
+
+		function validateForm() {
+			let isValid = true;
+
+			if (!campusController.validateFields()) {
+				isValid = false;
+			}
+
+			return isValid;
+		}
+	</script>
+
+}

@@ -1,0 +1,25 @@
+﻿@page
+@model CASPAR.ApplicationCore.ViewModels.Input.TeacherPrefsInput
+@{
+}
+
+@using (Html.Awe().BeginContext())
+{
+    <div class="bar">
+    </div>
+    <div style="max-width: 900px">
+        @(Html.Awe().Grid("Instructor")
+            .Mod(o => o.PageInfo().ColumnsSelector().AutoMiniPager().KeyNav().InfiniteScroll())
+            .Selectable(SelectionType.Single)
+            .Columns(
+            new Column { Bind = "ApplicationUser.LastName,ApplicationUser.FirstName", ClientFormat = ".(Name)", Header = "Instructor" },
+            new Column { Bind = "Modality.ModalityType", ClientFormat = ".(Mod)" },
+            new Column { Bind = "Campus.CampusName", ClientFormat = ".(Loc)" },
+            new Column { Bind = "PreferencesRank", Header = "Rank" }
+            )
+            .Url(Url.Action(nameof(CASPAR.Areas.ProgramCoordinator.Controllers.TeacherPreferencesController.GetTeacherPrefs), "TeacherPreferences", Model))
+            .Groupable(false)
+            .Height(350))
+    </div>
+
+}

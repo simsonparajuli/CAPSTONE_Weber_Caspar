@@ -1,0 +1,40 @@
+﻿@page
+@model CASPAR.Areas.ProgramCoordinator.Pages.Tickets.IndexModel
+@{
+	ViewData["Title"] = "Tickets";
+}
+
+<div class="row">
+	<!-- Name of current dashboard-->
+	<h4>Tickets</h4>
+</div>
+
+<!-- Create a new card-->
+<div class="row">
+	<div class="col-12 mb-3">
+		<div class="card">
+			<div class="card-body py-5">
+				@(Html.Awe().Grid("DisplayTickets")
+					.Mod(o => o.Main())
+					.Columns(
+					new Column { Bind = "TicketID" },
+					new Column { Bind = "Instructor.FirstName,Instructor.LastName", ClientFormat = ".(Name)" },
+					new Column { Bind = "TicketType" },
+					new Column { Bind = "TicketDescription" },
+					new Column { ClientFormatFunc = "editBtn" }
+					)
+					.Url(Url.Action(nameof(CASPAR.Areas.ProgramCoordinator.Controllers.TicketsController.GetAll), "Tickets"))
+					)
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts{
+	<script>
+		function editBtn(model) {
+			let number = model.ticketID;
+			return `<a class="btn btn-outline-primary" href="/ProgramCoordinator/Tickets/Upsert?ID=${number}">Edit</a>`;
+		}
+	</script>
+}

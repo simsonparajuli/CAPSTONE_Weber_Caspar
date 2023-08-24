@@ -1,0 +1,61 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+
+
+@if (SignInManager.IsSignedIn(User))
+{
+	<button class="nav-link btn btn-dark dropdown-toggle ms-auto"
+			type="button"
+			data-bs-toggle="dropdown"
+			data-bs-target="#logindropdown"
+			aria-expanded="false">
+		<i class="bi bi-person-fill">
+			<a class="text-light" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
+		</i>
+	</button>
+	<ul class="dropdown-menu dropdown-menu-lg-end dropdown-menu-start me-2" role="menu" id="logindropdown">
+		<li class="dropdown-item">
+			<form class="form-inline" 
+			asp-area="Identity" 
+			asp-page="/Account/Logout" 
+			asp-route-returnUrl="@Url.Page("/", new { area = "" })"
+			onsubmit="clearAllPersistToNavBarDropDown()"
+			method="post">
+				<button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+			</form>
+		</li>
+
+@*		<li><a class="dropdown-item" href="#">Action</a></li>
+		<li><a class="dropdown-item" href="#">Another action</a></li>
+		<li><a class="dropdown-item" href="#">Something else here</a></li>
+*@	</ul>
+
+}
+else
+{
+	<button class="nav-link btn btn-dark dropdown-toggle ms-auto"
+			type="button" 
+			data-bs-toggle="dropdown"
+			data-bs-target="#logindropdown"
+			aria-expanded="false">
+		<i class="bi bi-person-fill">
+			<a class="text-light" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage"> Login / Register </a>
+		</i>
+	</button>
+	<ul class="dropdown-menu dropdown-menu-lg-end dropdown-menu-start me-2" role="menu" id="logindropdown">
+		<li class="dropdown-item">
+			<a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+		</li>
+		<li class="dropdown-item">
+			<a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+		</li>
+	</ul>
+@*	<button class="nav-link btn btn-secondary ms-auto"
+			type="button">
+		<i class="bi bi-person-fill">
+			<a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Login">Login</a>
+		</i>
+	</button>*@
+}

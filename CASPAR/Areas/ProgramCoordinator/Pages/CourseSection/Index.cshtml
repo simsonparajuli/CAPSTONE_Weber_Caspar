@@ -1,0 +1,87 @@
+﻿@page
+@model CASPAR.Areas.ProgramCoordinator.Pages.CourseSection.IndexModel
+@{
+    var gridName = "Sections";
+    var controllerName = "CourseSection";
+    ViewData["Title"] = "Sections";
+}
+
+
+
+
+@(
+Html.Awe().Grid(gridName)
+.Mod(o => o.Main()
+.InlineEdit(Url.Action(nameof(CASPAR.Areas.ProgramCoordinator.Controllers.CourseSectionController.Save), controllerName)))
+.Columns(
+    new Column { Bind = "Course.CourseName", ClientFormat = ".(CName)", PercentWidth = 10 },
+    Html.InlEditColumn(),
+    new Column { Bind = "PartOfTerm", Header = "Part of Term", PercentWidth = 3 }.InlString(),
+    new Column { Bind = "Modality.ModalityType", ClientFormat = ".(Mode)", Prop = "Mode", PercentWidth = 3 }
+    .InlDropdownList(new DropdownListOpt
+    {
+        Name = "ModalityId",
+        Url = Url.Action(nameof(CASPAR.Areas.ProgramCoordinator.Controllers.CourseSectionController.GetModality), controllerName)
+    }),
+    new Column { Bind = "Instructor.LastName,Instructor.FirstName", ClientFormat = ".(InstructorName)", PercentWidth = 5 }
+    @*.Inl(Html.Awe().LookupFor(o => o.InstructorID)
+            .LookupGrid(Url.Action("TeacherPref", "TeacherPreferences", new { SemesterId = ".(SemesterId)", CourseId = ".(CourseID)" }))
+            .Controller("TeacherPreferences")),*@
+    .InlDropdownList(new DropdownListOpt
+    {
+        Name = "InstructorId",
+        Url = Url.Action(nameof(CASPAR.Areas.ProgramCoordinator.Controllers.CourseSectionController.GetInstructors), controllerName)
+    }),
+    new Column { Bind = "Classroom.Building.Campus.CampusName", ClientFormat = ".(Loc)", Header = "Location", PercentWidth = 10 },
+    new Column { Bind = "DayOfTheWeek.DayOfWeek", ClientFormat = ".(Days)", Header = "Day of week", PercentWidth = 3 }
+    .InlDropdownList(new DropdownListOpt
+    {
+        Name = "DaysOfTheWeekId",
+        Url = Url.Action(nameof(CASPAR.Areas.ProgramCoordinator.Controllers.CourseSectionController.GetDaysOfTheWeek), controllerName)
+    }),
+    new Column { Bind = "TimeSlot.TimeSlotType", ClientFormat = ".(Time)", Header = "Time Slot", PercentWidth = 3 }
+    .InlDropdownList(new DropdownListOpt
+    {
+        Name = "TimeSlotId",
+        Url = Url.Action(nameof(CASPAR.Areas.ProgramCoordinator.Controllers.CourseSectionController.GetTimeSlot), controllerName)
+    }),
+    new Column { Bind = "Status.StatusType", ClientFormat = ".(Stat)", PercentWidth = 5 }
+    .InlDropdownList(new DropdownListOpt
+    {
+        Name = "StatusId",
+        Url = Url.Action(nameof(CASPAR.Areas.ProgramCoordinator.Controllers.CourseSectionController.GetStatus), controllerName)
+    }),
+    new Column { Bind = "Classroom.Building.BuildingName,Classroom.RoomNum", ClientFormat = ".(ClassroomNum)", Header = "Classroom", PercentWidth = 10 }
+    .Inl(Html.Awe().LookupFor(o => o.ClassroomID)
+            .LookupGrid(Url.Action("ClassroomUsedIn", "CourseSection", new { classRoomID = ".(classRoomID)", semesterScheduleID = ".(semesterScheduleID)" }))
+            .Controller("CourseSection")),
+    new Column { Bind = "WhoPays.WhoPaysType", ClientFormat = ".(WhoPays)", Header = "Who Pays", PercentWidth = 5 },
+    new Column { Bind = "PayModel.PayModelType", ClientFormat = ".(PayMod)", Header = "Pay Model", PercentWidth = 5 },
+    new Column { Bind = "MaxEnrollment", Header = "Max Enrollment", PercentWidth = 2 }
+    .InlString(),
+    new Column { Bind = "FirstDayEnrollment", Header = "First Day Enrollment", PercentWidth = 2 },
+    new Column { Bind = "ThirdWeekEnrollment", Header = "Third Week Enrollment", PercentWidth = 2 },
+    new Column { Bind = "Crn", PercentWidth = 5 },
+    new Column { Bind = "SectionNotes", Header = "Section Notes", PercentWidth = 10 }
+    .InlString(),
+    new Column { Bind = "Id" }.InlId(),
+    Html.InlDeleteColumn(gridName)
+)
+.Url(Url.Action(nameof(CASPAR.Areas.ProgramCoordinator.Controllers.CourseSectionController.GetCourseSections), controllerName))
+.Height(1000)
+.PercentWidth(100)
+)
+
+@(Html.Awe().Grid("Preferences").Columns(
+    new Column { Bind = "ModalityId" },
+    new Column { Bind = "CampusId" },
+    new Column { Bind = "TimeOfDayID" },
+    new Column { Bind = "Count" },
+    new Column { Bind = "CourseName" }
+).Url(Url.Action("GetInterest", "CourseSection"))
+.Width(700)
+.Height(500)
+
+)
+
+//@(Html.BindOVldForId<CourseSectionInput>(gridName))

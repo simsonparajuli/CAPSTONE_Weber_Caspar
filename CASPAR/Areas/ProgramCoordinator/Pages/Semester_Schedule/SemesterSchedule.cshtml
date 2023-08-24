@@ -1,0 +1,34 @@
+﻿@page
+@using CASPAR.ApplicationCore.ViewModels;
+@*@model CASPAR.Areas.ProgramCoordinator.Pages.Semester_Schedule.SemesterScheduleModel*@
+@model IEnumerable<CASPAR.ApplicationCore.ViewModels.SemesterScheduleViewModel>
+
+<table>
+    <thead>
+        <tr>
+            <th>Schedule Name</th>
+            <th>Semester</th>
+            <th>Template Name</th>
+            <th>Course Quantity</th>
+            <th>Open Enrollment Date</th>
+            <th>Close Enrollment Date</th>
+            <th>Status</th>
+            <th>Course</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var schedule in Model)
+        {
+            <tr>
+                <td>@schedule.ScheduleName</td>
+                <td>@schedule.Semester</td>
+                <td>@schedule.TemplateName</td>
+                <td>@schedule.CourseQuantity</td>
+                <td>@schedule.OpenEnrollmentDate</td>
+                <td>@schedule.CloseEnrollmentDate</td>
+                <td>@schedule.Status</td>
+                <td>@schedule.Course</td>
+            </tr>
+        }
+    </tbody>
+</table>

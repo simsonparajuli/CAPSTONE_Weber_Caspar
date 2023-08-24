@@ -1,0 +1,135 @@
+﻿@page
+@using CASPAR.ApplicationCore.Models;
+@using CASPAR.Utility;
+@using CASPAR.Areas.Instructors.Pages.Preferences;
+@model SearchModel
+@{
+	ViewData["Title"] = "Preferences";
+}
+
+<div class="row">
+	<!-- Name of current dashboard-->
+	<h4>Search Course</h4>
+</div>
+
+<!-- Create a new card-->
+<div class="row">
+	<div class="col-3 mb-3">
+		<div class="card shadow">
+			<div class="card-body py-5">
+				<form method="get" id="searchCourse">
+
+					<!-- Semester Name -->
+					<label asp-for="@Model.CourseSearchVM.Semester.Id">Semester</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>*@
+						<input type="text" class="form-control" value="@Model.CourseSearchVM.Semester.SemesterName @Model.CourseSearchVM.Semester.SemesterYear" disabled readonly />
+					</div>
+
+					<!-- Course Prefix -->
+					<label asp-for="@Model.CourseSearchVM.Course.ProgramPrefix">Course Prefix</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>*@
+						<select asp-for="@Model.CourseSearchVM.Course.ProgramPrefix" class="form-select">
+							<option disabled selected>--Select Prefix--</option>
+							@foreach (string type in SDCourseProgramPrefix.getAll())
+							{
+								<option value=@type>@type</option>
+							}
+						</select>
+					</div>
+
+					<!-- Course Number -->
+					<label asp-for="@Model.CourseSearchVM.Course.CourseNumber">Course Number</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>*@
+						<input type="number" asp-for="@Model.CourseSearchVM.Course.CourseNumber" class="form-control" />
+					</div>
+
+
+					<!-- Course Name -->
+					<label asp-for="@Model.CourseSearchVM.Course.CourseName">Course Name</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>*@
+						<input type="text" asp-for="@Model.CourseSearchVM.Course.CourseName" class="form-control" />
+					</div>
+
+					<!-- Start of Submit buttons -->
+					<div class="d-flex">
+
+
+						<div class="ms-auto">
+							<a asp-area="Instructor" asp-page="/Preferences/Index" asp-route-Semester="@Model.CourseSearchVM.Semester.Id" class="btn btn-secondary shadow-sm">Cancel</a>
+							<input type="submit" class="btn btn-primary shadow-sm" value="Search" />
+							@*asp-page-handler="EditTicket"*@
+						</div>
+					</div>
+					<!-- End of Submit buttons -->
+					@{
+						if (Model.CourseSearchVM.Semester != null)
+						{
+							<input type="hidden" asp-for="@Model.CourseSearchVM.Semester.Id" />
+							<input type="hidden" asp-for="@Model.CourseSearchVM.Semester.SemesterName" />
+							<input type="hidden" asp-for="@Model.CourseSearchVM.Semester.SemesterYear" />
+						}
+					}
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="col-9 mb-3">
+		<div class="card shadow">
+			<div class="card-body py-5">
+				@(Html.Awe().Grid("DisplayCourses")
+					.Mod(o => o.Main())
+					.Columns(
+					new Column { Bind = "ProgramPrefix" },
+					new Column { Bind = "CourseNumber", },
+					new Column { Bind = "CourseName" },
+					new Column { Bind = "CreditHours" },
+					new Column { ClientFormatFunc = "editBtn" }
+					)
+					.Url(Url.Action(nameof(CASPAR.Areas.Instructors.Controllers.PreferencesController.GetCourseList), "Preferences"))
+					.Parameter("CoursePrefix", Model.CourseSearchVM.Course.ProgramPrefix)
+					.Parameter("CourseNumber", Model.CourseSearchVM.Course.CourseNumber)
+					.Parameter("CourseName", Model.CourseSearchVM.Course.CourseName)
+					)
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--This is the script we'll use to map data and dynamically generate table details with DataTables.net-->
+@section Scripts{
+	@if (User.IsInRole(StaticDetails.Instructor))
+	{
+		<script>
+			function editBtn(model) {
+				let number = model.courseID;
+				let semester = @Model.CourseSearchVM.Semester.Id;
+				return `<a class="btn btn-outline-primary" href="/Instructor/Preferences/Upsert?CourseID=${number}&SemesterID=${semester}">Add</a>`;
+			}
+		</script>
+
+	}
+	else if (User.IsInRole(StaticDetails.Student))
+	{
+		<script>
+			function editBtn(model) {
+				let number = model.courseID;
+				let semester = @Model.CourseSearchVM.Semester.Id;
+				return `<a class="btn btn-outline-primary" href="/Student/Preferences/Upsert?CourseID=${number}&SemesterID=${semester}">Add</a>`;
+			}
+		</script>
+
+	}
+}

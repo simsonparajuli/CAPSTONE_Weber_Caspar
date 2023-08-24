@@ -1,0 +1,9 @@
+﻿<div class="efield">
+    <div class="elabel">
+        @Html.Label("", null, new {@for = Html.ViewContext.HttpContext.Items[Settings.ContextKey] + ViewData.TemplateInfo.GetFullHtmlFieldName(string.Empty) + ViewData["__idpostfix"]})
+    </div>
+    <div class="einput">
+        @RenderBody()
+    </div>
+    @Html.ValidationMessage("")
+</div>

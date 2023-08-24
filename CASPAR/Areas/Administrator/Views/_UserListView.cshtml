@@ -1,0 +1,12 @@
+﻿@*@model AweCoreDemo.ViewModels.Input.DinnerInput
+@using (Html.BeginForm())
+{
+    using (Html.Awe().BeginContext())
+    {
+        @Html.EditorFor(o => o.Name)
+        @Html.EditorFor(o => o.Date)
+        @Html.EditorFor(o => o.ChefId)
+        @Html.EditorFor(o => o.MealsIds)
+        @Html.EditorFor(o => o.BonusMealId)
+    }
+}*@

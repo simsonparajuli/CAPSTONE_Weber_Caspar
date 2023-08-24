@@ -1,0 +1,164 @@
+﻿@page
+@using CASPAR.ApplicationCore.Models;
+@model CASPAR.Areas.Administrator.Pages.Semester_Template.UpsertModel
+@{
+}
+<div class="row">
+    <!-- Name of current dashboard-->
+    <h4>@(Model.TemplateVM.Template.TemplateID != 0 ? "Update" : "Create") Template</h4>
+</div>
+
+<!-- Create a new card-->
+<div class="row">
+    <div class="col-12 mb-3">
+        <div class="card">
+            <div class="card-body py-5 shadow">
+                <form asp-page-handler="template" method="post" asp-route-id="@Model.TemplateVM.Template.TemplateID">
+                    <!--Text Input for Template Name-->
+                    <label asp-for="TemplateVM.Template.TemplateName">Template Name</label>
+                    <div class="input-group flex-nowrap pb-2">
+                        <span class="input-group-text bg-primary">
+                            <i class="bi bi-fonts text-white"></i>
+                        </span>
+                        <input asp-for="TemplateVM.Template.TemplateName" class="form-control border-0 shadow" required />
+                        <span asp-validation-for="TemplateVM.Template.TemplateName" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary">@(Model.TemplateVM.Template.TemplateID != 0 ? "Update " : "Create ")</button>
+                    <!-- Hidden Inputs -->
+                    <input type="hidden" asp-for="TemplateVM.Template.TemplateID" />
+                    <!-- End of Hidden Inputs-->
+                </form>
+                <a class="btn btn-secondary shadow-sm" asp-area="Administrator" asp-page="/Semester_Template/index">
+                    Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.TemplateVM.Template.TemplateID != 0)
+{
+    <div class="row">
+        <div class="col-12 mb-3">
+            <div class="card">
+                <div class="card-body py-5 shadow">
+                    <button class="btn btn-primary" onclick="createSemesterTemplate()">Add Course</button>
+                    <!--List of for SemesterTemplate items connected to the Template-->
+                    <table class="table table-bordered table-striped" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Course Name
+                                </th>
+                                <th>
+                                    Quantity
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblSemesterTemplatesBody">
+                            @{
+                                foreach (var semesterTemplateObj in Model.SemesterTemplateList)
+                                {
+                                    int courseID = semesterTemplateObj.CourseID;
+                                    <tr>
+                                        <form asp-page-handler="semestertemplate" method="post" asp-route-id="@Model.TemplateVM.Template.TemplateID">
+                                            <td>
+                                                <!-- Dropdown Input for SemesterTemplate Course -->
+                                                <label asp-for="@Model.TemplateVM.SemesterTemplate.CourseID" />
+                                                <select asp-for="@Model.TemplateVM.SemesterTemplate.CourseID" class="form-select" required>
+                                                    @foreach (var courseObj in Model.CourseList)
+                                                    {
+                                                        if (courseID == courseObj.CourseID)
+                                                        {
+                                                            <option value="@courseObj.CourseID" selected="selected">@courseObj.CourseNumber - @courseObj.CourseName</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@courseObj.CourseID">@courseObj.CourseNumber - @courseObj.CourseName</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <!-- Number Input for Quantity -->
+                                                <label asp-for="@Model.TemplateVM.SemesterTemplate.CourseQuantity" />
+                                                <input asp-for="@Model.TemplateVM.SemesterTemplate.CourseQuantity" type="number" min="1" value=@semesterTemplateObj.CourseQuantity class="form-control" required />
+                                            </td>
+                                            <td>
+                                                <button type="submit" class="btn btn-primary">Save</button>
+                                                <a asp-page="DeleteSemesterTemplate" asp-route-id="@semesterTemplateObj.SemesterTemplateID" class="btn btn-danger mx-2">
+                                                    <i class="bi bi-trash-fill"></i> Delete
+                                                </a>
+
+                                            </td>
+                                            <!-- Hidden Inputs -->
+                                            <input type="hidden" asp-for="@Model.TemplateVM.SemesterTemplate.SemesterTemplateID" value="@semesterTemplateObj.SemesterTemplateID" />
+                                            <input type="hidden" asp-for="@Model.TemplateVM.SemesterTemplate.TemplateID" value="@Model.TemplateVM.Template.TemplateID" />
+                                            <!-- End of Hidden Inputs-->
+                                        </form>
+                                    </tr>
+                                }
+                            }
+                            <tr id="newRow" hidden>
+                                <td>
+                                        <form id="newForm" asp-page-handler="semestertemplate" method="post" asp-route-id="@Model.TemplateVM.Template.TemplateID">
+                                        <!-- Dropdown Input for SemesterTemplate Course -->
+                                        <label asp-for="@Model.TemplateVM.SemesterTemplate.CourseID" />
+                                        <select asp-for="@Model.TemplateVM.SemesterTemplate.CourseID" class="form-select" required>
+                                            <option disabled selected>--Select Course--</option>
+                                                @foreach (var courseObj in Model.CourseList)
+                                                {
+                                                <option value="@courseObj.CourseID">@courseObj.CourseNumber - @courseObj.CourseName</option>
+                                                }
+                                        </select>
+                                        <!-- Hidden Inputs -->
+                                        <input type="hidden" asp-for="@Model.TemplateVM.SemesterTemplate.TemplateID" value="@Model.TemplateVM.Template.TemplateID" />
+                                        <!-- End of Hidden Inputs-->
+
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <!-- Number Input for Quantity -->
+                                        <label asp-for="@Model.TemplateVM.SemesterTemplate.CourseQuantity" />
+                                    <input asp-for="@Model.TemplateVM.SemesterTemplate.CourseQuantity" type="number" min="1" value="1" class="form-control" required />
+                                    </td>
+                                    <td>
+                                    <button id="newSaveButton" type="submit" class="btn btn-primary">Save</button>
+                                    </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts{
+    <script>
+        function createSemesterTemplate() {
+            let table = document.getElementById("tblSemesterTemplatesBody");
+            let firstRow = document.getElementById("newRow");
+            let firstForm = document.getElementById("newForm");
+            let firstSubmit = document.getElementById("newSaveButton");
+
+
+            let newRow = firstRow.cloneNode(true);
+            let newForm = newRow.querySelector("#newForm");
+            let newSubmit = newRow.querySelector("#newSaveButton");
+            let newCourseQuantity = newRow.querySelector("#TemplateVM_SemesterTemplate_CourseQuantity");
+            newRow.removeAttribute("hidden");
+            
+            // Generate a unique id for the new form
+            newRow.setAttribute("id", "newRow" + table.rows.length);
+            newForm.setAttribute("id", "newForm" + table.rows.length);
+
+            newCourseQuantity.setAttribute("form", "newForm" + table.rows.length);
+
+            newSubmit.setAttribute("id", "newSaveButton" + table.rows.length);
+            newSubmit.setAttribute("form", "newForm" + table.rows.length);
+
+            table.appendChild(newRow);
+        }
+    </script>
+}

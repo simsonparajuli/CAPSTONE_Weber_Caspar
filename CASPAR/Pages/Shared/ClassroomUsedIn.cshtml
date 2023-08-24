@@ -1,0 +1,23 @@
+﻿@page
+@model CASPAR.Pages.Shared.ClassroomUsedInModel
+@{
+}
+@using (Html.Awe().BeginContext()) { 
+    <div class="bar">
+    </div>
+    <div style="max-width: 900px">
+        @(Html.Awe().Grid("ClassroomsUsedStatus")
+              .Mod(o => o.PageInfo().ColumnsSelector().AutoMiniPager().KeyNav().InfiniteScroll())
+              .Selectable(SelectionType.Single)
+              .Columns(
+              new Column { Bind = "RoomNum", Header = "Room #" },
+              new Column { Bind = "Building.BuildingName", ClientFormat = ".(Name)" },
+              new Column { Bind = "Capacity" },
+              new Column { Bind = "UsedIn"}
+              )
+              .Url(Url.Action(nameof(CASPAR.Areas.ProgramCoordinator.Controllers.ClassroomController.GetClassrooms), "Classroom"))
+              .Groupable(false)
+              .Height(350))
+    </div>
+
+}

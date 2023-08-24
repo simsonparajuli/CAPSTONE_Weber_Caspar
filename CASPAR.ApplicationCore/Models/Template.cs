@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CASPAR.ApplicationCore.Models
+{
+	public class Template
+	{
+		[Key]
+		[Required]
+		public int TemplateID { get; set; }
+
+		[Required]
+		public string TemplateName { get; set; }
+	}
+}

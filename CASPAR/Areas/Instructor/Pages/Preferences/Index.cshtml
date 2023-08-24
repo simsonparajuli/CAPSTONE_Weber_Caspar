@@ -1,0 +1,175 @@
+﻿@page
+@using CASPAR.ApplicationCore.Models;
+@using CASPAR.Areas.Instructors.Pages.Preferences;
+@using CASPAR.Utility;
+@model IndexModel
+@{
+	ViewData["Title"] = "Preferences";
+}
+
+<div class="row">
+	<!-- Name of current dashboard-->
+	<h4>Preferences</h4>
+</div>
+
+<!-- Create a new card-->
+<div class="row">
+	<div class="col-4 mb-3">
+		<div class="card shadow">
+			<div class="card-body py-5">
+				<form method="get" id="selectSemsterForm">
+					<!-- Semster Id-->
+					<label asp-for="@Model.Semester.Id">Select a Semester</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>*@
+						<select asp-for="Semester" class="form-select">
+							<option disabled selected>--Select Semester--</option>
+							@foreach (Semester type in Model.Semesters)
+							{
+								<option value=@type.Id>@type.SemesterName @type.SemesterYear</option>
+							}
+						</select>
+					</div>
+					@*					<input type="hidden" asp-for="Semester"/>
+					*@
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="col-4 mb-3">
+		<div class="card shadow">
+			<div class="card-body py-5">
+				<form method="get" id="addNewCourseForm" asp-area="Instructor" asp-page="/Preferences/Search" runat="server">
+					<!-- Add-->
+					<span>Add Course</span>
+					<div class="input-group flex-nowrap pb-2">
+						@{
+							if (Model.Semester != null && Model.Semester.Id != 0)
+							{
+								<button type="submit" class="btn btn-primary shadow-sm">Add New Course</button>
+							}
+							else
+							{
+								<button type="submit" class="btn btn-primary shadow-sm disabled">Add New Course</button>
+							}
+						}
+					</div>
+					@{
+						if (Model.Semester != null)
+						{
+							<input type="hidden" value="@Model.Semester.Id" asp-for="@Model.Semester" />
+						}
+					}
+				</form>
+			</div>
+		</div>
+	</div>
+	@if (User.IsInRole(StaticDetails.Instructor))
+	{
+		<div class="col-4 mb-3">
+			<div class="card shadow">
+				<div class="card-body py-5">
+					<!-- Load-->
+					<span>Load</span>
+					<div class="input-group flex-nowrap pb-2">
+						@{
+							if (Model.InstructorLoad != null && Model.InstructorLoad.Load != 0)
+							{
+								<input class="form-control" type="number" value="@Model.InstructorLoad.Load" asp-for="@Model.InstructorLoad.Load" disabled />
+							}
+							else
+							{
+								<input class="form-control" type="text" value="N/A" disabled />
+							}
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+
+</div>
+
+<!-- Create a new card-->
+<div class="row">
+	<div class="col-12 mb-3">
+		<div class="card shadow">
+			<div class="card-body py-5">
+@*				TODO: Because some rows can be null like TimeOfDay.Time it causes errors when trying to group by them
+				https://www.aspnetawesome.com/forum/question/1720/issue-binding-grid-data-during-grouping-with-possible-null-node
+*@				@if (User.IsInRole(StaticDetails.Instructor))
+				{
+					@(Html.Awe().Grid("DisplayInstructorPreferences")
+						.Mod(o => o.Main())
+						.Columns(
+						new Column { Bind = "PreferencesRank", Header = "Preferences Rank" },
+						new Column { Bind = "Course.ProgramPrefix", ClientFormat = ".(ProgramPrefix)", Header = "Program Prefix" },
+						new Column { Bind = "Course.CourseNumber", ClientFormat = ".(CourseNumber)", Header = "Course Number" },
+						new Column { Bind = "Course.CreditHours", ClientFormat = ".(CreditHours)", Header = "Credit Hours" },
+						new Column { Bind = "SafeDayOfWeekDay", Header = "Day of Week" },
+						new Column { Bind = "SafeTimeOfDayTime", Header = "Time of Day" },
+						new Column { Bind = "Modality.ModalityType", ClientFormat = ".(Modality)", Header = "Modality" },
+						new Column { Bind = "SafeCampusName", Header = "Campus" },
+						new Column { ClientFormatFunc = "editBtn" }
+						)
+						.Url(Url.Action(nameof(CASPAR.Areas.Instructors.Controllers.PreferencesController.DisplayInstructorPreferences), "Preferences"))
+						.Parameter("Semester", Model.Semester.Id)
+						)
+				}
+				else if (User.IsInRole(StaticDetails.Student))
+				{
+					@(Html.Awe().Grid("DisplayStudentPreferences")
+						.Mod(o => o.Main())
+						.Columns(
+						new Column { Bind = "Course.ProgramPrefix", ClientFormat = ".(ProgramPrefix)", Header = "Program Prefix" },
+						new Column { Bind = "Course.CourseNumber", ClientFormat = ".(CourseNumber)", Header = "Course Number" },
+						new Column { Bind = "Course.CreditHours", ClientFormat = ".(CreditHours)", Header = "Credit Hours" },
+						new Column { Bind = "SafeTimeOfDayTime", Header = "Time of Day" },
+						new Column { Bind = "Modality.ModalityType", ClientFormat = ".(Modality)", Header = "Modality" },
+						new Column { Bind = "SafeCampusName", Header = "Campus" },
+						new Column { ClientFormatFunc = "editBtn" }
+						)
+						.Url(Url.Action(nameof(CASPAR.Areas.Instructors.Controllers.PreferencesController.DisplayStudentPreferences), "Preferences"))
+						.Parameter("Semester", Model.Semester.Id)
+						)
+				}
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--This is the script we'll use to map data and dynamically generate table details with DataTables.net-->
+@section Scripts{
+	<script>
+		// On change of the semster submit the form
+		$(document).ready(function () {
+			$('#Semester').on('change', function () {
+				var $form = $(this).closest('form');
+				$form.submit();
+			});
+		});
+	</script>
+
+	@if (User.IsInRole(StaticDetails.Instructor))
+	{
+		<script>
+			function editBtn(model) {
+				let number = model.preferenceDetailsID;
+				return `<a class="btn btn-outline-primary" href="/Instructor/Preferences/Upsert?PreferenceID=${number}">Edit</a>`;
+			}
+		</script>
+
+	}
+	else if (User.IsInRole(StaticDetails.Student))
+	{
+		<script>
+			function editBtn(model) {
+				let number = model.preferenceDetailsID
+				return `<a class="btn btn-outline-primary" href="/Student/Preferences/Upsert?PreferenceID=${number}">Edit</a>`;
+			}
+		</script>
+	}
+}
+

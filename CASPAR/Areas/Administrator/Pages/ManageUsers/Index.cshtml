@@ -1,0 +1,49 @@
+﻿@page
+@{
+    ViewData["Title"] = "Users";
+}
+<div class="row">
+	<h4>Mange Users</h4>
+</div>
+
+<div class="row">
+	<div class="col-12 mb-3">
+		<div class="card">
+			<div class="card-body py-5">
+				@(Html.Awe().Grid("UsersGrid")
+					.Url(Url.Action(nameof(CASPAR.Areas.Administrator.Controllers.UserController.GetEfAsyncItems), "User"))
+					.Height(300)
+					.Columns(
+					new Column { Bind = "ApplicationUser.FirstName,ApplicationUser.LastName", ClientFormat = ".(Name)" },
+					new Column { ClientFormat = ".(Role)" },
+                    new Column { ClientFormatFunc = "adminRoleBtn", Width = 120, CssClass = "center" }
+                    @*new Column { ClientFormat = makeAdminBtnFormat, Width = 120, CssClass = "center" }*@
+                    ))
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+    <script>
+        function adminRoleBtn(model) {
+            return "<button type='button' class='awe-btn' onclick='assignAdminRole(\"" + model.id + "\")'>Make Admin</button>";
+        }
+
+        function assignAdminRole(userId) {
+
+            $.ajax({
+                url: '@Url.Action("AssignAdminRole", "User")',
+                type: 'POST',
+                data: { id: userId },
+                success: function (response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        }
+    </script>
+}

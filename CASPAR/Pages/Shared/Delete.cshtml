@@ -1,0 +1,9 @@
+﻿@model DeleteConfirmInput
+<div style="padding: 0 3em;">
+    @using (Html.BeginForm())
+    {
+        @Html.Raw(Model.Message)
+    }
+    @*used by the popupform .OnLoad func*@
+    <input type="hidden" name="key" value="@(Model.Id)"/>
+</div>

@@ -1,0 +1,451 @@
+﻿@page
+@using CASPAR.Areas.Instructors.Pages.Preferences;
+@model UpsertModel
+@{
+	ViewData["Title"] = "Preferences";
+}
+<div class="row">
+	<!-- Name of current dashboard-->
+	<h4>Preferences</h4>
+</div>
+
+<!-- Create a new card-->
+<div class="row">
+	<div class="col-12 mb-3">
+		<div class="card shadow">
+			<div class="card-body py-5">
+				<form method="post" id="selectPreference" onsubmit="return validateForm()">
+					<div class="row">
+						<div class="col-6">
+							<!-- Course Prefix -->
+							<label asp-for="@Model.InstructorPreferenceAddVM.Course.ProgramPrefix">Course Prefix</label>
+							<div class="input-group flex-nowrap pb-2">
+								@*						<span class="input-group-text bg-primary">
+								<i class="bi bi-ticket-perforated text-white"></i>
+								</span>*@
+								<input type="text" asp-for="@Model.InstructorPreferenceAddVM.Course.ProgramPrefix" class="form-control" disabled>
+							</div>
+						</div>
+						<div class="col-6">
+							<!-- Course Numnber -->
+							<label asp-for="@Model.InstructorPreferenceAddVM.Course.CourseNumber">Course Number</label>
+							<div class="input-group flex-nowrap pb-2">
+								@*						<span class="input-group-text bg-primary">
+								<i class="bi bi-ticket-perforated text-white"></i>
+								</span>*@
+								<input type="text" asp-for="@Model.InstructorPreferenceAddVM.Course.CourseNumber" class="form-control" disabled>
+							</div>
+						</div>
+					</div>
+
+					<!-- Course Name -->
+					<label asp-for="@Model.InstructorPreferenceAddVM.Course.CourseName">Course Name</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>*@
+						<input type="text" asp-for="@Model.InstructorPreferenceAddVM.Course.CourseName" class="form-control" disabled>
+					</div>
+
+					<!-- Semster Name and Year-->
+					<label asp-for="@Model.InstructorPreferenceAddVM.SemesterNameAndYear">Semester</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>*@
+						<input type="text" asp-for="@Model.InstructorPreferenceAddVM.SemesterNameAndYear" class="form-control" value="@Model.InstructorPreferenceAddVM.Semester.SemesterName @Model.InstructorPreferenceAddVM.Semester.SemesterYear" disabled>
+					</div>
+
+					<!-- Modality -->
+					<label asp-for="@Model.InstructorPreferenceAddVM.Preference.ModalityID">Modality</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>*@
+						<select asp-for="@Model.InstructorPreferenceAddVM.Preference.ModalityID" class="form-select" onchange="changeRequirementsForModality()" required>
+							<option disabled selected value="">--Select Modality--</option>
+							@foreach (Modality type in Model.Modalities)
+							{
+								<option value=@type.Id>@type.ModalityDescription</option>
+							}
+						</select>
+					</div>
+					<div class="row">
+						<span asp-validation-for="@Model.InstructorPreferenceAddVM.Preference.ModalityID" class="text-danger"></span>
+					</div>
+
+					<!-- Rank -->
+					<label asp-for="@Model.InstructorPreferenceAddVM.Preference.PreferencesRank">
+						<div>Rank</div>
+						<div class="text-muted">Select which one to be above</div>
+					</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>*@
+						<select asp-for="@Model.InstructorPreferenceAddVM.Preference.PreferencesRank" class="form-select" required>
+							<option disabled selected value="">--Select Rank--</option>
+							@{
+								foreach (InstructorPreferences type in Model.PreviousPreferences)
+								{
+
+									<option value=@type.PreferencesRank>@type.PreferencesRank - @type.Course.CourseNumber @type.Course.CourseName</option>
+								}
+							}
+							<option value=@Model.LowestModelPreferenceValue>Lowest</option>
+
+						</select>
+					</div>
+					<div class="row">
+						<span asp-validation-for="@Model.InstructorPreferenceAddVM.Preference.PreferencesRank" class="text-danger"></span>
+					</div>
+
+					<div class="row">
+						<div class="col-6">
+							<!-- Day of Week -->
+							<label asp-for="@Model.InstructorPreferenceAddVM.Preference.DayOfWeekID">Day of Week</label>
+							<div class="input-group flex-nowrap pb-2">
+								@*						<span class="input-group-text bg-primary">
+								<i class="bi bi-ticket-perforated text-white"></i>
+								</span>*@
+								<select asp-for="@Model.InstructorPreferenceAddVM.Preference.DayOfWeekID" class="form-select" disabled>
+									<option disabled selected value="">--Select time--</option>
+									@foreach (DayOfTheWeek type in Model.DayOfTheWeek)
+									{
+										<option value=@type.DayOfTheWeekID>@type.DayOfWeek</option>
+									}
+									<option value="">N/A</option>
+								</select>
+							</div>
+							<div class="row">
+								<span asp-validation-for="@Model.InstructorPreferenceAddVM.Preference.DayOfWeekID" class="text-danger"></span>
+							</div>
+						</div>
+						<div class="col-6">
+							<!-- Time of day -->
+							<label asp-for="@Model.InstructorPreferenceAddVM.Preference.TimeOfDayID">Time of Day</label>
+							<div class="input-group flex-nowrap pb-2">
+								@*						<span class="input-group-text bg-primary">
+								<i class="bi bi-ticket-perforated text-white"></i>
+								</span>*@
+								<select asp-for="@Model.InstructorPreferenceAddVM.Preference.TimeOfDayID" class="form-select" disabled>
+									<option disabled selected value="">--Select time--</option>
+									@foreach (TimeOfDay type in Model.TimeOfTheDay)
+									{
+										<option value=@type.Id>@type.Time</option>
+									}
+									<option value="">N/A</option>
+								</select>
+							</div>
+							<div class="row">
+								<span asp-validation-for="@Model.InstructorPreferenceAddVM.Preference.TimeOfDayID" class="text-danger"></span>
+							</div>
+						</div>
+					</div>
+
+					<!-- Campus -->
+					<label asp-for="@Model.InstructorPreferenceAddVM.Preference.CampusID">Campus</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>*@
+						<select asp-for="@Model.InstructorPreferenceAddVM.Preference.CampusID" class="form-select" disabled>
+							<option disabled selected value="">--Select Campus--</option>
+							@foreach (Campus type in Model.Campuses)
+							{
+								<option value=@type.Id>@type.CampusName</option>
+							}
+							<option value="">N/A</option>
+						</select>
+					</div>
+					<div class="row">
+						<span asp-validation-for="@Model.InstructorPreferenceAddVM.Preference.CampusID" class="text-danger"></span>
+					</div>
+
+					<!-- Start of Submit buttons -->
+					<div class="d-flex">
+						@if (Model.InstructorPreferenceAddVM.Preference.PreferenceDetailsID != 0)
+						{
+							<div class="">
+								<button type="button" class="btn btn-danger shadow-sm" data-bs-toggle="modal" data-bs-target="#preferenceModal">
+									<span>
+										<i class="bi bi-trash text-white"></i>
+									</span>
+									Delete
+								</button>
+							</div>
+						}
+
+						<div class="ms-auto">
+							<a asp-area="Instructor" asp-page="/Preferences/Index" asp-route-Semester="@Model.InstructorPreferenceAddVM.Semester.Id" class="btn btn-secondary shadow-sm">Cancel</a>
+							@if (Model.InstructorPreferenceAddVM.Preference.PreferenceDetailsID != 0)
+							{
+								<input asp-page-handler="EditPreference" type="submit" class="btn btn-primary shadow-sm" value="Save" />
+							}
+							else
+							{
+								<input asp-page-handler="CreatePreference" type="submit" class="btn btn-primary shadow-sm" value="Save" />
+							}
+						</div>
+					</div>
+					<!-- End of Submit buttons -->
+					<!-- Hidden inputs -->
+					<input type="hidden" asp-for="@Model.InstructorPreferenceAddVM.Preference.WNumber" />
+					<input type="hidden" asp-for="@Model.InstructorPreferenceAddVM.Course.CourseID" />
+					<input type="hidden" asp-for="@Model.InstructorPreferenceAddVM.Semester.Id" />
+					<input type="hidden" asp-for="@Model.InstructorPreferenceAddVM.Preference.PreferenceDetailsID" />
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Start of modal-->
+<div class="modal" id="preferenceModal" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Delete Preference</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to <b class="text-danger">delete</b> this preference for </p>
+				<p><b>@Model.InstructorPreferenceAddVM.Course.CourseNumber @Model.InstructorPreferenceAddVM.Course.CourseName</b>?</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<input asp-page-handler="DeletePreference" type="submit" form="selectPreference" class="btn btn-danger" value="Delete" />
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script>
+		class Preferences {
+
+			/**
+			* See if requried. True = required
+			* @@type {boolean}
+			*/
+			#Modality = true;
+			#ModalityID = 'InstructorPreferenceAddVM_Preference_ModalityID';
+			#ModalityQuerySelector = '[data-valmsg-for="InstructorPreferenceAddVM.Preference.ModalityID"]';
+
+			/**
+			* See if requried. True = required
+			* @@type {boolean}
+			*/
+			#PreferencesRank = true;
+			#PreferencesRankID = 'InstructorPreferenceAddVM_Preference_PreferencesRank';
+			#PreferencesRankQuerySelector = '[data-valmsg-for="InstructorPreferenceAddVM.Preference.PreferencesRank"]';
+
+
+			/**
+			 * See if requried. True = required
+			 * @@type {boolean}
+			 */
+			#DayOfWeek = false;
+			#DayOfWeekID = 'InstructorPreferenceAddVM_Preference_DayOfWeekID';
+			#DayOfWeekQuerySelector = '[data-valmsg-for="InstructorPreferenceAddVM.Preference.DayOfWeekID"]';
+
+			/**
+			 * See if requried. True = required
+			 * @@type {boolean}
+			 */
+			#TimeOfDay = false;
+			#TimeOfDayID = "InstructorPreferenceAddVM_Preference_TimeOfDayID";
+			#TimeOfDayQuerySelector = '[data-valmsg-for="InstructorPreferenceAddVM.Preference.TimeOfDayID"]';
+
+			/**
+			* See if requried. True = required
+			* @@type {boolean}
+			*/
+			#Campus = false;
+			#CampusID = 'InstructorPreferenceAddVM_Preference_CampusID';
+			#CampusQuerySelector = '[data-valmsg-for="InstructorPreferenceAddVM.Preference.CampusID"]';
+
+			/**
+			* Used to toggle if time of day is required for the modality
+			* Also hides or displays the None option
+			* @@param {boolean} if true then field is required
+			*/
+			requireTimeOfDay(toggle) {
+				if (toggle) {
+					this.#TimeOfDay = true;
+				}
+				else {
+					this.#TimeOfDay = false;
+				}
+				this.#requirefield(this.#TimeOfDayID, this.#TimeOfDayQuerySelector, toggle);
+			}
+
+			/**
+			* Used to toggle if day of week is required for the modality
+			* @@param {boolean} if true then field is required
+			*/
+			requireDayOfWeek(toggle) {
+				if (toggle) {
+					this.#DayOfWeek = true;
+				}
+				else {
+					this.#DayOfWeek = false;
+				}
+				this.#requirefield(this.#DayOfWeekID, this.#DayOfWeekQuerySelector, toggle);
+			}
+
+			/**
+			* Used to toggle if campus is required for the modality
+			* @@param {boolean} if true then field is required
+			*/
+			requireCampus(toggle) {
+				if (toggle) {
+					this.#Campus = true;
+				}
+				else {
+					this.#Campus = false;
+				}
+				this.#requirefield(this.#CampusID, this.#CampusQuerySelector, toggle);
+			}
+
+			/**
+			 * If the select field is requireds make it editable.
+			 * If not disable the input and set it to empty
+			 * @@param {string} Id The Id for the Input
+			 * @@param {string} ErrorQuery The Query for the Error DOM element\
+			 * @@param {boolean} toggle If we are making the param required
+			*/
+			#requirefield(Id, ErrorQuery, toggle) {
+				let object = document.getElementById(Id);
+				let NoneOption = object.options[object.options.length - 1];
+				if (toggle) {
+					if (object.value == '') {
+						object.options.selectedIndex = 0;
+					}
+					object.disabled = false;
+					NoneOption.style.display = 'none';
+				}
+				else {
+					object.options.selectedIndex = object.options.length - 1;
+					object.disabled = true;
+					NoneOption.style.display = 'initial';
+				}
+				let span = $(ErrorQuery)[0];
+				span.innerText = "";
+			}
+
+			/**
+			 * Checks if values is not empty. If empty dispaly error.
+			 * @@param {string} Id The Id for the Input
+			 * @@param {string} ErrorQuery The Query for the Error DOM element
+			 * @@returns {boolean} Returns true if there is an error
+			*/
+			#validateRequirement(Id, ErrorQuery) {
+				let object = document.getElementById(Id);
+				let span = $(ErrorQuery)[0];
+
+				if (object.value == "") {
+					span.innerText = "Please select a value.";
+					return true;
+				}
+				else {
+					span.innerText = "";
+				}
+				return false;
+			}
+
+			/**
+			 * Validate all the fields. If they are return true, and if not display error messages
+			 * @@returns {boolean} returns true if valid
+			 */
+			validateFields() {
+				let isValid = true;
+				if (this.#validateRequirement(this.#ModalityID, this.#ModalityQuerySelector)) {
+					isValid = false;
+				}
+
+				if (this.#validateRequirement(this.#PreferencesRankID, this.#PreferencesRankQuerySelector)) {
+					isValid = false;
+				}
+
+				if (this.#TimeOfDay) {
+					if (this.#validateRequirement(this.#TimeOfDayID, this.#TimeOfDayQuerySelector)) {
+						isValid = false;
+					}
+				}
+				if (this.#DayOfWeek) {
+					if (this.#validateRequirement(this.#DayOfWeekID, this.#DayOfWeekQuerySelector)) {
+						isValid = false;
+					}
+				}
+				if (this.#Campus) {
+					if (this.#validateRequirement(this.#CampusID, this.#CampusQuerySelector)) {
+						isValid = false;
+					}
+				}
+
+				return isValid;
+			}
+		};
+		// initulize the preferences right away
+		let Preference = new Preferences();
+
+		// InstructorPreferenceAddVM_Preference_ModalityID
+		// InstructorPreferenceAddVM_Preference_PreferencesRank
+		// InstructorPreferenceAddVM_Preference_TimeOfDayID
+		// InstructorPreferenceAddVM_Preference_DayOfWeekID
+		// InstructorPreferenceAddVM_Preference_CampusID
+
+		function changeRequirementsForModality() {
+			let value = document.getElementById('InstructorPreferenceAddVM_Preference_ModalityID').value;
+			/*
+			1	FTF	Face to Face
+			2	ONL	Online
+			3	VRT	Virtual
+			4	HYB	Hybrid
+			*/
+			switch (Number(value)) {
+				case 1:
+					Preference.requireTimeOfDay(true);
+					Preference.requireDayOfWeek(true);
+					Preference.requireCampus(true);
+					break;
+
+				case 2:
+					Preference.requireTimeOfDay(false);
+					Preference.requireDayOfWeek(false);
+					Preference.requireCampus(false);
+					break;
+
+				case 3:
+					Preference.requireTimeOfDay(true);
+					Preference.requireDayOfWeek(true);
+					Preference.requireCampus(false);
+					break;
+
+				case 4:
+					Preference.requireTimeOfDay(true);
+					Preference.requireDayOfWeek(true);
+					Preference.requireCampus(true);
+					break;
+				default:
+					break;
+			}
+		}
+		// Check the preferences on window load
+		$(document).ready(function () {
+			changeRequirementsForModality();
+		});
+
+
+		function validateForm() {
+			let isValid = true;
+
+			if (!Preference.validateFields()) {
+				isValid = false;
+			}
+
+			return isValid;
+		}
+	</script>
+}

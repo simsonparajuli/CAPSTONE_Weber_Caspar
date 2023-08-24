@@ -1,0 +1,144 @@
+﻿@page
+@model CASPAR.Areas.Students.Pages.Information.IndexModel
+@{
+	ViewData["Title"] = "Information";
+}
+
+<div class="row">
+	<!-- Name of current dashboard-->
+	<h4>Profile Information</h4>
+</div>
+
+<!-- Create a new card-->
+<div class="row">
+	<div class="col-12 mb-3">
+		<div class="card">
+			<div class="card-body py-5 shadow">
+				<form method="post" asp-page="" enctype="multipart/form-data" id="informationForm" onsubmit="return validateForm()">
+					<!-- Graduation Year -->
+					<label asp-for="Student.GraduationYear">Graduation Year</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>
+						*@
+						<input asp-for="Student.GraduationYear" class="form-control" />
+					</div>
+					<div class="row">
+						<span asp-validation-for="@Model.Student.GraduationYear" class="text-danger"></span>
+					</div>
+
+					<!-- Major -->
+					<label asp-for="Student.MajorId">Major</label>
+					<div class="input-group flex-nowrap pb-2">
+						@*						<span class="input-group-text bg-primary">
+						<i class="bi bi-ticket-perforated text-white"></i>
+						</span>
+						*@
+						<select asp-for="Student.MajorId" asp-items="@(new SelectList(Model.Majors, nameof(Major.Id), nameof(Major.MajorName) ))" class="form-select" required>
+							<option value="" disabled selected>--Select a Major--</option>
+						</select>
+					</div>
+					<div class="row">
+						<span asp-validation-for="@Model.Student.MajorId" class="text-danger"></span>
+					</div>
+
+
+					<!-- Start of Submit buttons -->
+					<div class="d-flex">
+						<div class="ms-auto">
+							<a asp-area="" asp-page="/Index" class="btn btn-secondary shadow-sm">Cancel</a>
+							<input asp-page-handler="EditInformation" type="submit" class="btn btn-primary shadow-sm" value="Save" />
+						</div>
+					</div>
+					<!-- End of Submit buttons -->
+					<!-- Hidden Inputs-->
+					<!-- End of Hidden Inputs-->
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- End of modal-->
+@section Scripts{
+	<script>
+		class ProfileInformationController {
+
+			/**
+			* See if requried. True = required
+			* @@type {boolean}
+			*/
+			#GraduationYear = true;
+			#GraduationYearID = 'Student_GraduationYear';
+			#GraduationYearQuerySelector = '[data-valmsg-for="Student.GraduationYear"]';
+
+			/**
+			* See if requried. True = required
+			* @@type {boolean}
+			*/
+			#Major = true;
+			#MajorID = 'Student_MajorId';
+			#MajorSelector = '[data-valmsg-for="Student.MajorId"]';
+
+			/**
+			 * Checks if values is not empty. If empty dispaly error.
+			 * @@param {string} Id The Id for the Input
+			 * @@param {string} ErrorQuery The Query for the Error DOM element
+			 * @@param {string?} [ErrorMessage=Please select a value] The error message that will be displayed
+			 * @@param {Object.<function(Object.Value)>:boolean} [Validation=((u) => { return u == "" })] A function that sees if value is invalid. True = Error; False = Correct;
+			 * @@returns {boolean} Returns true if there is an error
+			*/
+			#validateRequirement(Id, ErrorQuery, ErrorMessage = "Please select a value", Validation = ((u) => { return u == "" })) {
+				let object = document.getElementById(Id);
+				let span = $(ErrorQuery)[0];
+				if (Validation(object.value)) {
+					span.innerText = ErrorMessage;
+					return true;
+				}
+				else {
+					span.innerText = "";
+				}
+				return false;
+			}
+
+			/**
+			 * Validate all the fields. If they are return true, and if not display error messages
+			 * @@returns {boolean} returns true if valid
+			 */
+			validateFields() {
+				let isValid = true;
+				if (this.#validateRequirement(this.#GraduationYearID, this.#GraduationYearQuerySelector, "Need to select a year within 150 years",
+					((u) => {
+						let year = new Date().getFullYear();
+						if (u >= (year + 150) || u <= (year - 150)){
+							return true;
+						}
+						else {
+							return false;
+						}
+					}))) {
+					isValid = false;
+				}
+
+				if (this.#validateRequirement(this.#MajorID, this.#MajorSelector)) {
+					isValid = false;
+				}
+
+				return isValid;
+			}
+		};
+		// initulize the preferences right away
+		let ProfileInformation = new ProfileInformationController();
+
+		function validateForm() {
+			let isValid = true;
+
+			if (!ProfileInformation.validateFields()) {
+				isValid = false;
+			}
+
+			return isValid;
+		}
+	</script>
+}

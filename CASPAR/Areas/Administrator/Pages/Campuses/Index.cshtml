@@ -1,0 +1,50 @@
+﻿@page
+@model CASPAR.Areas.Administrator.Pages.Campuses.IndexModel
+@{
+	ViewData["Title"] = "Campus";
+}
+<div class="row">
+	<!-- Name of current dashboard-->
+	<h4>Campus</h4>
+</div>
+<!-- Create a new card-->
+<div class="row">
+	<div class="col-4 mb-3">
+		<div class="card shadow">
+			<div class="card-body py-5">
+				<h5>Create New Campus</h5>
+				<a class="btn btn-outline-primary" asp-area="Administrator" asp-page="/Campuses/Upsert">Create</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Create a new card-->
+<!-- Create a new card-->
+<div class="row">
+	<div class="col-12 mb-3">
+		<div class="card">
+			<div class="card-body py-5">
+				@(Html.Awe().Grid("DisplayCampus")
+					.Mod(o => o.Main())
+					.Columns(
+					new Column { Bind = "CampusName", Header = "Name" },
+					new Column { Bind = "Address1,SafeAddress2", Header = "Address", ClientFormat = ".(Address)" },
+					new Column { Bind = "State" },
+					new Column { ClientFormatFunc = "editBtn" }
+					)
+					.Url(Url.Action(nameof(CASPAR.Areas.Administrator.Controllers.CampusController.GetAll), "Campus"))
+					)
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts{
+	<script>
+		function editBtn(model) {
+			let number = model.id;
+			return `<a class="btn btn-outline-primary" href="/Administrator/Campuses/Upsert?ID=${number}">Edit</a>`;
+		}
+	</script>
+}

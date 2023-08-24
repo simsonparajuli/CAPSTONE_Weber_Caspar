@@ -1,0 +1,92 @@
+﻿@page
+@model CASPAR.Pages.CardExampleModel
+@{
+	ViewData["Title"] = "Example";
+}
+
+<div class="row">
+	<!-- Name of current dashboard-->
+	<h4>Dashboard</h4>
+</div>
+
+<!-- Create a new card-->
+<div class="row">
+	<div class="col-12 mb-3">
+		<div class="card">
+			<div class="card-header">
+				<span class="me-2"><i class="bi bi-bar-chart-fill"></i></span>
+				Card Header (for chart names) or maybe add new item
+			</div>
+			<div class="card-body py-5">
+				Card Body
+				<br />
+				<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+					Launch demo modal
+				</button>
+			</div>
+			<div class="card-footer d-flex">
+				Card Footer (for adding links)
+				<span class="ms-auto">
+					<i class="bi bi-chevron-right"></i>
+				</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Start of Another Card -->
+<div class="col-12 mb-3">
+	<div class="card">
+		<div class="card-header">
+			Test Form
+		</div>
+		<div class="card-body py-5">
+			<form method="post">
+				<label asp-for="@Model.CurrentRole.Name">Role</label>
+				<div class="input-group flex-nowrap">
+					<span class="input-group-text bg-primary">
+						<i class="bi bi-person-badge text-white"></i>
+					</span>
+					<input class="form-control" asp-for="@Model.CurrentRole.Name" value="@Model.CurrentRole.Name" />
+				</div>
+
+			</form>
+		</div>
+		<div class="card-footer d-flex">
+			Card Footer (for adding links)
+			<span class="ms-auto">
+				<i class="bi bi-chevron-right"></i>
+			</span>
+		</div>
+	</div>
+</div>
+<!-- End of Another Card-->
+<!-- Start of modal-->
+<div class="modal" id="exampleModal" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Modal title</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>Modal body text goes here.</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary">Save changes</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- End of modal-->
+@section Scripts{
+	<script>
+		//$(document).ready(function() {
+		//    // run function on page load
+		//  });
+
+
+
+	</script>
+	}

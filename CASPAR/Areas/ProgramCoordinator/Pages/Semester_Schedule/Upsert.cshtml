@@ -1,0 +1,121 @@
+﻿@page
+@model CASPAR.Areas.ProgramCoordinator.Pages.Semester_Schedule.UpsertModel
+@{
+	ViewData["Title"] = "Create/Update Semester";
+}
+<div class="row">
+	<!-- Name of current dashboard-->
+	<h4>@(Model.objSemesterSchedule.SemesterTemplateID != 0 ? "Update" : "Create")  Semester Schedule</h4>
+</div>
+
+<!-- Create a new card-->
+<div class="row">
+	<div class="col-12 mb-3">
+		<div class="card">
+			<div class="card-body py-5 shadow">
+				<form method="post">
+					<!--Text Input for Semester Name-->
+					<label asp-for="objSemesterSchedule.ScheduleName">Semester Name</label>
+					<div class="input-group flex-nowrap pb-2">
+						<span class="input-group-text bg-primary">
+							<i class="bi bi-fonts text-white"></i>
+						</span>
+						<input asp-for="objSemesterSchedule.ScheduleName" class="form-control border-0 shadow" />
+						<span asp-val
+						idation-for="objSemesterSchedule.ScheduleName" class="text-danger"></span>
+					</div>
+
+					<!--Dropdown Input for Semester Template-->
+					<label asp-for="objSemesterSchedule.SemesterTemplateID">Status</label>
+					<div class="input-group flex-nowrap pb-2">
+						<span class="input-group-text bg-primary">
+							<i class="bi bi-check text-white"></i>
+						</span>
+						<select id="ddlTemplate" asp-for="objSemesterSchedule.SemesterTemplateID" asp-items="@Model.SemesterTemplateList" class="form-select">
+							<option disabled selected>--Select Template--</option>
+						</select>
+					</div>
+
+					<div class="row">
+						<div class="col-6">
+							<!--Dropdown Input for Semester Status-->
+							<label asp-for="objSemesterSchedule.StatusID">Status</label>
+							<div class="input-group flex-nowrap pb-2">
+								<span class="input-group-text bg-primary">
+									<i class="bi bi-check text-white"></i>
+								</span>
+								<select id="ddlStatus" asp-for="objSemesterSchedule.StatusID" asp-items="@Model.StatusList" class="form-select">
+									<option disabled selected>--Select Status--</option>
+								</select>
+							</div>
+						</div>
+						<div class="col-6">
+							<!--Dropdown Input for Semester-->
+							<label asp-for="objSemesterSchedule.SemesterID">Semester</label>
+							<div class="input-group flex-nowrap pb-2">
+								<span class="input-group-text bg-primary">
+									<i class="bi bi-collection text-white"></i>
+								</span>
+								<select id="ddlStatus" asp-for="objSemesterSchedule.SemesterID" asp-items="@Model.SemesterList" class="form-select">
+									<option disabled selected>--Select Semester--</option>
+								</select>
+							</div>
+
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-6">
+							<!--Date Selector for Open Enrollment Date-->
+							<label asp-for="objSemesterSchedule.OpenEnrollmentDate" class="ms-2" type="date"></label>
+							<div class="input-group flex-nowrap pb-2">
+								<span class="input-group-text bg-primary">
+									<i class="bi bi-calendar-check text-white"></i>
+								</span>
+								<input asp-for="objSemesterSchedule.OpenEnrollmentDate" class="form-control border-0 shadow" />
+							</div>
+						</div>
+						<div class="col-6">
+							<!--Date Selector for Close Enrollment Date-->
+							<label asp-for="objSemesterSchedule.CloseEnrollmentDate" class="ms-2" type="date"></label>
+							<div class="input-group flex-nowrap pb-2">
+								<span class="input-group-text bg-primary">
+									<i class="bi bi-calendar-x text-white"></i>
+								</span>
+								<input asp-for="objSemesterSchedule.CloseEnrollmentDate" class="form-control border-0 shadow" />
+							</div>
+						</div>
+					</div>
+
+					@if (Model.objSemesterSchedule.SemesterScheduleID != 0)
+					{
+						<input type="hidden" asp-for="objSemesterSchedule.SemesterScheduleID" />
+					}
+
+					<!--Submit/Cancel buttons-->
+					<div class="row pt-2">
+						<div class="col-6 col-md-3">
+						</div>
+						<div class="col-6 col-md-3">
+						</div>
+					</div>
+					<div class="d-flex">
+						<div class="ms-auto">
+							<div class="">
+								<a class="btn btn-secondary shadow-sm" asp-page="/Categories/Index">
+									Back to List
+								</a>
+								<button type="submit" class="btn btn-primary">@(Model.objSemesterSchedule.SemesterScheduleID != 0 ? "Update " : "Create ")</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--This is the script we'll use to map data and dynamically generate table details with DataTables.net-->
+@section Scripts{
+	<script src="~/js/tickets.js"></script>
+}

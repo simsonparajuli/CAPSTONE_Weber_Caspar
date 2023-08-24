@@ -1,0 +1,82 @@
+﻿@page
+@model CASPAR.Areas.Administrator.Pages.InstructorList.IndexModel
+
+@{
+    ViewBag.Title = "Instructor List Page";
+}
+
+<h2>Instructor List</h2>
+
+<label for="yearFilter">Select Year: </label>
+@Html.Awe().DropdownList(
+    new DropdownListOpt
+    {
+        Name = "yearFilter",
+        Url = Url.Action("GetYears", "Instructor")
+    }
+)
+
+<script type="text/javascript">
+    function applyYearFilter() {
+        var year = $('#yearFilter').val();
+        $('#InstructorGrid').data('awe').reload({ oparams: { year: year } });
+    }
+</script>
+
+@(Html.Awe().Grid("InstructorGrid")
+    .Url(Url.Action("GetInstructors", "Instructor"))
+    .Columns(
+        new Column { Bind = "ProgramPreference", Header = "Program Preference" },
+        new Column { Bind = "FirstName", Header = "First Name" },
+        new Column { Bind = "LastName", Header = "Last Name" },
+        new Column { Bind = "SpringLoad", Header = "Spring Load" },
+        new Column { Bind = "SummerLoad", Header = "Summer Load" },
+        new Column { Bind = "FallLoad", Header = "Fall Load" },
+        new Column { Bind = "Roles", Header = "Roles" },
+        new Column
+        {
+            Bind = "Details",
+            Header = "Details",
+            ClientFormat =
+        "<button class='btn btn-info' onclick='openDetailsPopup(\".WNumber\")'>Details</button>"
+        }
+    )
+    .PageSize(10)
+    .Height(500)
+)
+
+<script type="text/javascript">
+    function openDetailsPopup(wNumber) {
+        $.post('@Url.Action("GetInstructorDetails", "Instructor")', { Id: wNumber })
+            .done(function (content) {
+                // display content here
+            })
+            .fail(function () {
+                alert('Failed to retrieve details.');
+            });
+    }
+</script>
+
+@*@page
+@model CASPAR.Areas.Administrator.Pages.InstructorList.IndexModel
+@{
+    ViewBag.Title = "Instructor List Page";
+}
+
+<h2>Instructor List</h2>
+
+@(Html.Awe().Grid("InstructorGrid")
+    .Url(Url.Action("GetInstructors", "Instructor"))
+    .Columns(
+        new Column { Bind = "ProgramPreference", Header = "Program Preference" },
+        new Column { Bind = "FirstName", Header = "First Name" },
+        new Column { Bind = "LastName", Header = "Last Name" },
+        new Column { Bind = "SpringLoad", Header = "Spring Load" },
+        new Column { Bind = "SummerLoad", Header = "Summer Load" },
+        new Column { Bind = "FallLoad", Header = "Fall Load" },
+        new Column { Bind = "Roles", Header = "Roles" },
+        new Column { Bind = "Details", Header = "Details" }
+    )
+    .PageSize(10)
+    .Height(500)
+)*@

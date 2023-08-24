@@ -1,0 +1,200 @@
+﻿@page
+@using CASPAR.Utility;
+@model CASPAR.Areas.ProgramCoordinator.Pages.Tickets.UpsertModel
+@{
+	ViewData["Title"] = "Tickets";
+}
+
+<div class="row">
+	<!-- Name of current dashboard-->
+	<h4>Tickets</h4>
+</div>
+
+<!-- Create a new card-->
+<div class="row">
+	<div class="col-12 mb-3">
+		<div class="card">
+			<div class="card-body py-5 shadow">
+				<form method="post" asp-page="Upsert" enctype="multipart/form-data" id="ticketForm">
+
+					@if (Model.TicketVM.Ticket.TicketID != 0)
+					{
+						<!-- Ticket Id-->
+						<label asp-for="TicketVM.Ticket.TicketID">Ticket Id</label>
+						<div class="input-group flex-nowrap pb-2">
+							<span class="input-group-text bg-primary">
+								<i class="bi bi-ticket-perforated text-white"></i>
+							</span>
+							<input asp-for="TicketVM.Ticket.TicketID" class="form-control" disabled />
+						</div>
+					}
+
+
+					@if (Model.TicketVM.Ticket.TicketID != 0)
+					{
+					}
+					else
+					{
+						<!-- WNumber -->
+						<label asp-for="TicketVM.Instructor.WNumber">WNumber</label>
+						<div class="input-group flex-nowrap pb-2">
+							<span class="input-group-text bg-primary">
+								<i class="bi bi-person text-white"></i>
+							</span>
+							@if (Model.TicketVM.Instructor == null)
+							{
+								<input asp-for="TicketVM.Instructor.WNumber" class="form-control" ) />
+							}
+							else
+							{
+								<input asp-for="TicketVM.Instructor.WNumber" class="form-control" ) disabled />
+							}
+						</div>
+					}
+
+
+					<!-- Start of name -->
+					<div class="row">
+						<div class="col-6">
+							<label asp-for="TicketVM.Instructor.FirstName"></label>
+
+							<div class="input-group flex-nowrap pb-2 ">
+								<span class="input-group-text bg-primary">
+									<i class="bi bi-person text-white"></i>
+								</span>
+								@if (Model.TicketVM.Instructor == null)
+								{
+									<input asp-for="TicketVM.Instructor.FirstName" class="form-control" />
+								}
+								else
+								{
+									<input asp-for="TicketVM.Instructor.FirstName" class="form-control" disabled />
+								}
+							</div>
+						</div>
+
+						<div class="col-6">
+							<label asp-for="TicketVM.Instructor.LastName"></label>
+							<div class="input-group flex-nowrap pb-2">
+								<span class="input-group-text bg-primary">
+									<i class="bi bi-person text-white"></i>
+								</span>
+								@if (Model.TicketVM.Instructor == null)
+								{
+									<input asp-for="TicketVM.Instructor.LastName" class="form-control" />
+								}
+								else
+								{
+									<input asp-for="TicketVM.Instructor.LastName" class="form-control" disabled />
+								}
+							</div>
+						</div>
+					</div>
+					<!-- End of name -->
+
+					<!-- Email -->
+					<label asp-for="TicketVM.Instructor.Email">Email</label>
+					<div class="input-group flex-nowrap pb-2">
+						<div class="input-group flex-nowrap pb-2">
+							<span class="input-group-text bg-primary">
+								<i class="bi bi-envelope text-white"></i>
+							</span>
+							@if (Model.TicketVM.Instructor == null)
+							{
+								<input asp-for="TicketVM.Instructor.Email" class="form-control" />
+							}
+							else
+							{
+								<input asp-for="TicketVM.Instructor.Email" class="form-control" disabled />
+							}
+						</div>
+					</div>
+
+					<!-- Ticket Type -->
+					<label asp-for="TicketVM.Ticket.TicketType">Ticket Type</label>
+					<div class="input-group flex-nowrap pb-2">
+						<span class="input-group-text bg-primary">
+							<i class="bi bi-ticket-perforated text-white"></i>
+						</span>
+						<select asp-for="TicketVM.Ticket.TicketType" class="form-select">
+
+							@foreach (string type in SDTicketType.getAllTypes())
+							{
+								<option value=@type>@type</option>
+							}
+						</select>
+					</div>
+
+					<!-- Ticket Description -->
+					<label asp-for="TicketVM.Ticket.TicketDescription">Ticket Description</label>
+					<div class="input-group flex-nowrap pb-2">
+						<textarea asp-for="TicketVM.Ticket.TicketDescription" class="form-control" rows="3"></textarea>
+					</div>
+
+					<!-- Start of Submit buttons -->
+					<div class="d-flex">
+						@if (Model.TicketVM.Ticket.TicketID != 0)
+						{
+							<div class="">
+								<button type="button" class="btn btn-danger shadow-sm" data-bs-toggle="modal" data-bs-target="#ticketModal">
+									<span>
+										<i class="bi bi-trash text-white"></i>
+									</span>
+									Delete
+								</button>
+							</div>
+						}
+
+						<div class="ms-auto">
+							<a asp-area="ProgramCoordinator" asp-page="/Tickets/Index" class="btn btn-secondary shadow-sm">Cancel</a>
+							@if (Model.TicketVM.Ticket.TicketID != 0)
+							{
+								<input asp-page-handler="EditTicket" type="submit" class="btn btn-primary shadow-sm" value="Save" />
+							}
+							else
+							{
+								<input asp-page-handler="CreateTicket" type="submit" class="btn btn-primary shadow-sm" value="Save" />
+							}
+						</div>
+					</div>
+					<!-- End of Submit buttons -->
+					<!-- Start of Hidden Inputs-->
+					<input type="hidden" asp-for="TicketVM.Instructor.Id" class="form-control" />
+					<input type="hidden" asp-for="TicketVM.Ticket.WNumber" class="form-control" />
+					<input type="hidden" asp-for="TicketVM.Ticket.TicketID" class="form-control" />
+					<!-- End of Hidden Inputs-->
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Start of modal-->
+<div class="modal" id="ticketModal" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Delete Ticket</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to <b class="text-danger">delete</b> this ticket?</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<input asp-page-handler="DeleteTicket" type="submit" form="ticketForm" class="btn btn-danger" value="Delete" />
+			</div>
+		</div>
+	</div>
+</div>
+<!-- End of modal-->
+@section Scripts{
+	<script>
+		//$(document).ready(function() {
+		//    // run function on page load
+		//  });
+
+
+
+	</script>
+	}

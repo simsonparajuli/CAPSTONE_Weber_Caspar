@@ -1,0 +1,2 @@
+﻿Because we have a Instructor class we have to change the namespace to Instructors
+This is because if not then we cannot use the Instructor Class
